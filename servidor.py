@@ -22,30 +22,6 @@ mysql.init_app(app)
 def index():
     return render_template('index.html')
 
-# Estrutura para inserir informacao no banco de dados via aplicacao web
-@app.route('/login', methods=['POST'])
-def cadastrar_informacao():
-
-    # recebendo inputs do form html
-    nome  = request.form['nome']
-    email = request.form['email']
-    senha = request.form['senha']
-
-    # armazenando informacao no banco de dados
-    if nome and email and senha:
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute( # insere o usuario em banco de dados
-            'insert into cadastro (nome, email, senha) values (%s, %s, %s);', 
-            (nome, email, senha)
-            )
-        conn.commit()
-        return render_template('index.html')
-
-    # desconecta do bando de dados e do cursor
-    cursor.close()
-    conn.close()
-
 # Retorna todos os nomes armazenados em banco de dados
 @app.route('/lista', methods=['GET', 'POST'])
 def listar():

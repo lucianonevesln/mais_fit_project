@@ -1,6 +1,7 @@
 -- Criando database
 create database frameworks_full_stack;
 
+-- Colocando o bando de dados em uso
 use frameworks_full_stack;
 
 -- Criando tabelas
