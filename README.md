@@ -12,7 +12,7 @@
 ### Anedino dos Santos;
 ### Augusto Roberto Santos Frota Reis;
 ### Kauan Amorim da Silva;
-### Rhuan EugÃªnio Abadias Carvalho;
+### Rhuan Eugênio Abadias Carvalho;
 ### Luciano Neves;
 
 # Tecnologias Utilizadas:

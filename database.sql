@@ -1,8 +1,8 @@
 -- Criando database
-create database frameworks_full_stack;
+create database heroku_f7de65fdae1ab14;
 
 -- Colocando o bando de dados em uso
-use frameworks_full_stack;
+use heroku_f7de65fdae1ab14;
 
 -- Criando tabelas
 create table sabores (
