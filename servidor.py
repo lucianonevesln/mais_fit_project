@@ -9,10 +9,10 @@ mysql = MySQL()
 app = Flask(__name__)
 
 # Script para conexao com o banco de dados
-app.config['MYSQL_DATABASE_USER']     = 'b41b536da2d233'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'a2d3d9bb'
-app.config['MYSQL_DATABASE_DB']       = 'heroku_f7de65fdae1ab14'
-app.config['MYSQL_DATABASE_HOST']     = 'us-cdbr-east-05.cleardb.net'
+app.config['MYSQL_DATABASE_USER']     = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_DB']       = ''
+app.config['MYSQL_DATABASE_HOST']     = ''
 
 # Iniciando a conexao com o banco de dados
 mysql.init_app(app)
