@@ -30,7 +30,6 @@ def listar():
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute('select id, nome, descricao, link, ativo from sabores')
-    # cursor.execute('select link from sabores') # retorna uma consulta em banco de dados
     nomes = cursor.fetchall()
     conn.commit()
     teste = {}
