@@ -1,5 +1,6 @@
 from sqlalchemy import text, engine_from_config, Integer
 from config import config
+import jwt
 
 
 engine = engine_from_config(config, prefix='db.')
@@ -22,6 +23,7 @@ def cadastrar_cliente(dados):
     nome_completo = dados["nome_completo"]
     cpf = dados["cpf"]
     nascimento = dados["nascimento"]
+    genero = dados["genero"]
     celular = dados["celular"]
     cep = dados["cep"]
     logradouro = dados["logradouro"]
@@ -30,17 +32,32 @@ def cadastrar_cliente(dados):
     bairro = dados["bairro"]
     email = dados["email"]
     senha = dados["senha"]
+    senha = jwt.encode({"senha":"{0}".format(senha)}, "secret", algorithm="HS256")
     with engine.connect() as con:
         statement = text("""INSERT INTO clientes 
-            (   nome_completo, cpf, nascimento, celular, cep, logradouro, numero, 
+            (   nome_completo, cpf, nascimento, genero, celular, cep, logradouro, numero, 
                 complemento, bairro, email, senha ) values
-            (:nome_completo, :cpf, :nascimento, :celular, :cep, :logradouro, 
+            (:nome_completo, :cpf, :nascimento, :genero, :celular, :cep, :logradouro, 
             :numero, :complemento, :bairro, :email, :senha)
         """)
         con.execute(statement, nome_completo=nome_completo, cpf=cpf, 
-                    nascimento=nascimento, celular=celular, cep=cep, 
+                    nascimento=nascimento, genero=genero, celular=celular, cep=cep, 
                     logradouro=logradouro, numero=numero, 
                     complemento=complemento, bairro=bairro, email=email, senha=senha)
+
+def listar_clientes():
+    with engine.connect() as con:
+        statement = text("""SELECT nome_completo, cpf, nascimento, genero, celular, cep, logradouro, numero, complemento, bairro, email, senha 
+                            FROM clientes
+                            WHERE ativo = 1""")
+        rs = con.execute(statement)
+        clientes = []
+        item = rs.fetchone()
+        while (item != None):
+            clientes.append(dict(item))
+            item = rs.fetchone()
+    return clientes
+
 
 def cliente_existe(cpf):
     with engine.connect() as con:
@@ -53,5 +70,5 @@ def cliente_existe(cpf):
             return "cliente existe"
 
 
-if __name__ == "__main__":
-    print(cliente_existe("11111111111"))
+# if __name__ == "__main__":
+#     print(cliente_existe("11111111111"))

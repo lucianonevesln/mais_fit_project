@@ -8,5 +8,5 @@ DB_URL = os.environ.get("DB_URL") # localhost/mais_fit
 connect_string = f'{DB}://{USER}:{PASS}@{DB_URL}'
 config = {
     'db.url': connect_string,
-    'db.echo':'True'
+    'db.echo':'False'
 }
