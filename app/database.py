@@ -82,4 +82,16 @@ def email_existe(email):
     """
         Verifica no banco se já existe um e-mail cadastrado no banco
     """
-    pass
+    with engine.connect() as con:
+        statement = text("""SELECT email 
+                            FROM clientes
+                            WHERE email = :email""")
+        rs = con.execute(statement, email=email)
+        item = rs.fetchone()
+        if item:
+            return True
+        else:
+            return False
+    
+# if __name__ == "__main__":
+#     print(cliente_existe("11111111111"))

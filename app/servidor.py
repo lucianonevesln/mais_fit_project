@@ -24,11 +24,14 @@ def cadastra_cliente():
 
     idade = retorna_idade(dados_cliente['nascimento'])
     cpf_exists = cpf_existe(dados_cliente['cpf'])
+    email_exists = email_existe(dados_cliente['email'])
 
     if cpf_exists:
         return {"message": "Já existe um cliente com esse CPF"}, 400
     if idade < 10:
-        return {"message": "Este cliente possui idade menor que 10 anos"}, 400
+        return {"status_code": 400, "message": "Este cliente possui idade menor que 10 anos"}
+    if email_exists:
+        return {"status_code": 400, "message": "Já existe um cliente com esse e-mail"}
     try:
         cadastrar_cliente(dados_cliente)
     except:
@@ -52,7 +55,10 @@ def verifica_cpf(cpf):
 
 @app.route("/verifica-email/<email>")
 def veirfica_email(email):
-    pass
+    email_exists = email_existe(email)
+    if email_exists:
+        return {"status_code": 200, "message": "Já existe um cliente com esse E-mail"}
+    return {"status_code": 400, "message": "Não existe um cliente com esse E-mail"}
 
 
 if __name__ == "__main__":
