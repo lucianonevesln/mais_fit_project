@@ -11,11 +11,11 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return "Home!"
+    return "Olá, você está na API da mais-fit!"
 
 @app.route("/lista")
 def listar_sabores():
-    return jsonify(lista_sabores_ativos())
+    return jsonify(lista_sabores_ativos()), 200
 
 
 @app.route("/clientes", methods=['POST'])
@@ -26,9 +26,9 @@ def cadastra_cliente():
     cpf_exists = cpf_existe(dados_cliente['cpf'])
 
     if cpf_exists:
-        return {"status_code": 400, "message": "Já existe um cliente com esse CPF"}
+        return {"message": "Já existe um cliente com esse CPF"}, 400
     if idade < 10:
-        return {"status_code": 400, "message": "Este cliente possui idade menor que 10 anos"}
+        return {"message": "Este cliente possui idade menor que 10 anos"}, 400
     try:
         cadastrar_cliente(dados_cliente)
     except:

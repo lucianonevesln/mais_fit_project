@@ -46,6 +46,10 @@ def cadastrar_cliente(dados):
                     complemento=complemento, bairro=bairro, email=email, senha=senha)
 
 def listar_clientes():
+    """
+        Lista todos os clientes da base de dados baseado em filtros
+    """
+    #TODO -> precisamos implementar os filtros de buscas
     with engine.connect() as con:
         statement = text("""SELECT nome_completo, cpf, nascimento, genero, celular, cep, logradouro, numero, complemento, bairro, email, senha 
                             FROM clientes"""
@@ -79,5 +83,3 @@ def email_existe(email):
         Verifica no banco se já existe um e-mail cadastrado no banco
     """
     pass
-# if __name__ == "__main__":
-#     print(cliente_existe("11111111111"))

@@ -13,6 +13,3 @@ def retorna_idade(data_nascimento):
 
 
     return ano_atual - ano_nascimento
-
-
-print(retorna_idade('1989-03-30'))
