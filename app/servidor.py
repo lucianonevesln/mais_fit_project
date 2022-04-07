@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
-from database import *
 from flask_cors import CORS
+
+from database import *
+from helpers import retorna_idade
+
 
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route("/")
 def home():
@@ -13,21 +17,43 @@ def home():
 def listar_sabores():
     return jsonify(lista_sabores_ativos())
 
+
 @app.route("/clientes", methods=['POST'])
 def cadastra_cliente():
     dados_cliente = request.json
-    cadastrar_cliente(dados_cliente)
-    return {}
+
+    idade = retorna_idade(dados_cliente['nascimento'])
+    cpf_exists = cpf_existe(dados_cliente['cpf'])
+
+    if cpf_exists:
+        return {"status_code": 400, "message": "Já existe um cliente com esse CPF"}
+    if idade < 10:
+        return {"status_code": 400, "message": "Este cliente possui idade menor que 10 anos"}
+    try:
+        cadastrar_cliente(dados_cliente)
+    except:
+        return {"message": "Não foi possível cadastrar o cliente."}, 500
+
+    return {"message": "Cliente cadastrado com sucesso!"}, 200
+
 
 @app.route("/clientes", methods=['GET'])
 def lista_cliente():
-    return jsonify(listar_clientes())
-
-@app.route("/cliente-existe/<cpf>")
-def verifica_cliente(cpf):
-    return cliente_existe(cpf)
+    return jsonify(listar_clientes()), 200
 
 
+@app.route("/verifica-cpf/<cpf>")
+def verifica_cpf(cpf):
+    cpf_exists = cpf_existe(cpf)
+    if cpf_exists:
+        return {"status_code": 200, "message": "Já existe um cliente com esse CPF "}
+    return {"status_code": 400, "message": "Não existe um cliente com esse CPF "}
 
-# if __name__ == "__main__":
-#     app.run("localhost", port=5000, debug=True)
+
+@app.route("/verifica-email/<email>")
+def veirfica_email(email):
+    pass
+
+
+if __name__ == "__main__":
+    app.run("localhost", port=5000, debug=True)
