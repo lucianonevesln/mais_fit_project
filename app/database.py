@@ -65,7 +65,7 @@ def listar_clientes():
 
 def cpf_existe(cpf):
     """
-        Verifica no banco se já existe um cpf cadastrado no banco
+        Verifica se já existe um cpf cadastrado no banco
     """
     with engine.connect() as con:
         statement = text("""SELECT cpf 
@@ -80,7 +80,7 @@ def cpf_existe(cpf):
 
 def email_existe(email):
     """
-        Verifica no banco se já existe um e-mail cadastrado no banco
+        Verifica se já existe um e-mail cadastrado no banco
     """
     with engine.connect() as con:
         statement = text("""SELECT email 
@@ -92,6 +92,3 @@ def email_existe(email):
             return True
         else:
             return False
-    
-# if __name__ == "__main__":
-#     print(cliente_existe("11111111111"))
