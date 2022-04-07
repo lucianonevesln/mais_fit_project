@@ -19,6 +19,20 @@ def lista_sabores_ativos():
             item = rs.fetchone()
     return sabores
 
+
+def lista_pagamentos_ativo():
+    with engine.connect() as con:
+        statement = text("""SELECT id, descricao, link 
+                            FROM forma_pagamento
+                            WHERE ativo = 1""")
+        rs = con.execute(statement)
+        pagamento = []
+        item = rs.fetchone()
+        while (item != None):
+            pagamento.append(dict(item))
+            item = rs.fetchone()
+    return pagamento
+
 def cadastrar_cliente(dados):
     nome_completo = dados["nome_completo"]
     cpf = dados["cpf"]

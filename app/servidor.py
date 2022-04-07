@@ -17,6 +17,10 @@ def home():
 def listar_sabores():
     return jsonify(lista_sabores_ativos()), 200
 
+@app.route("/formapagamento")
+def listar_pagamentos():
+    return jsonify(lista_pagamentos_ativo())
+
 
 @app.route("/clientes", methods=['POST'])
 def cadastra_cliente():
@@ -27,16 +31,16 @@ def cadastra_cliente():
     email_exists = email_existe(dados_cliente['email'])
 
     if cpf_exists:
-        return {"message": "Já existe um cliente com esse CPF"}, 400
+        return {"message": "Ja existe um cliente com esse CPF"}, 400
     if idade < 10:
         return {"message": "Este cliente possui idade menor que 10 anos"}, 400
     if email_exists:
-        return {"message": "Já existe um cliente com esse e-mail"}, 400
+        return {"message": "Ja existe um cliente com esse e-mail"}, 400
 
     try:
         cadastrar_cliente(dados_cliente)
     except:
-        return {"message": "Não foi possível cadastrar o cliente."}, 500
+        return {"message": "Nao foi possivel cadastrar o cliente."}, 500
 
     return {"message": "Cliente cadastrado com sucesso!"}, 200
 
@@ -50,16 +54,16 @@ def lista_cliente():
 def verifica_cpf(cpf):
     cpf_exists = cpf_existe(cpf)
     if cpf_exists:
-        return {"message": "Já existe um cliente com esse CPF "}, 200
-    return {"message": "Não existe um cliente com esse CPF "}, 400
+        return {"message": "Ja existe um cliente com esse CPF "}, 200
+    return {"message": "Nao existe um cliente com esse CPF "}, 400
 
 
 @app.route("/verifica-email/<email>")
 def veirfica_email(email):
     email_exists = email_existe(email)
     if email_exists:
-        return {"message": "Já existe um cliente com esse E-mail"}, 200
-    return {"message": "Não existe um cliente com esse E-mail"}, 400
+        return {"message": "Ja existe um cliente com esse E-mail"}, 200
+    return {"message": "Nao existe um cliente com esse E-mail"}, 400
 
 # lembrar de comentar essa parte quando for subir para o heroku
 if __name__ == "__main__":
