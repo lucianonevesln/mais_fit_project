@@ -9,7 +9,7 @@ engine = engine_from_config(config, prefix='db.')
 def lista_sabores_ativos():
     with engine.connect() as con:
         statement = text("""SELECT nome, descricao, link, ativo 
-                            FROM sabores
+                            FROM marmitas
                             WHERE ativo = 1""")
         rs = con.execute(statement)
         sabores = []
