@@ -19,11 +19,24 @@ def lista_sabores_ativos():
             item = rs.fetchone()
     return sabores
 
+def lista_kits_ativos():
+    with engine.connect() as con:
+        statement = text("""SELECT id, descricao, qtd_max_marmitas, valor, ativo
+                            FROM kits
+                            WHERE ativo = 1""")
+        rs = con.execute(statement)
+        kits = []
+        item = rs.fetchone()
+        while (item != None):
+            kits.append(dict(item))
+            item = rs.fetchone()
+    return kits
+
 
 def lista_pagamentos_ativo():
     with engine.connect() as con:
         statement = text("""SELECT id, descricao, link 
-                            FROM forma_pagamento
+                            FROM meios_pagamentos
                             WHERE ativo = 1""")
         rs = con.execute(statement)
         pagamento = []
@@ -106,3 +119,99 @@ def email_existe(email):
             return True
         else:
             return False
+
+def inserir_pedido(cliente_id, formas_pagamento, itens_pedido):
+
+    data_emissao = datetime.now()
+    
+    with engine.connect() as con:
+        try:
+            # inserindo pedido
+            statement = text ("""INSERT INTO pedidos 
+                                (status, data_emissao, cliente_id)
+                                VALUES (:status, :data_emissao, :cliente_id)""")
+
+            con.execute(statement, status="iniciado", data_emissao=data_emissao,
+                        cliente_id=cliente_id)
+
+            pedido_id = retorna_id_ultimo_pedido()
+            # após inserir o pedido, vou inserir as formas de pagamento do pedido
+            inserir_formas_pagamento(formas_pagamento, pedido_id)
+            # após, devemos inserir os itens do pedido
+            inserir_itens_pedido(itens_pedido, pedido_id)
+
+            return pedido_id
+        except Exception:
+            return None
+
+
+def retorna_id_ultimo_pedido():
+    with engine.connect() as con:
+        statement = text (
+            """
+                SELECT MAX(id) as maxId FROM pedidos
+            """
+        )
+        rs = con.execute(statement)
+        pedido_id = rs.fetchone()
+
+    return pedido_id[0]
+
+
+def inserir_formas_pagamento(formas_pagamento, pedido_id):
+    with engine.connect() as con:
+        for meios_pagamento in formas_pagamento:
+            statement = text (
+                """
+                    INSERT INTO formas_pagamentos (qtd, meio_pagamento_id, pedido_id)
+                    VALUES (:qtd, :meio_pagamento_id, :pedido_id)
+                """
+            )
+            con.execute(statement, qtd=meios_pagamento['qtd_pagamento'], 
+                        meio_pagamento_id=meios_pagamento['meio_pagamento_id'], 
+                        pedido_id=pedido_id)
+
+
+def inserir_itens_pedido(itens_pedido, pedido_id):
+    with engine.connect() as con:
+        for kit in itens_pedido:
+            statement = text (
+                """
+                    INSERT INTO itens_pedidos (preco, pedido_id, kit_id)
+                    VALUES (:preco, :pedido_id, :kit_id)
+                """
+            )
+
+            preco = buscar_preco_kit(kit['kit_id'])
+
+            con.execute(statement, preco=preco, pedido_id=pedido_id,
+                        kit_id=kit['kit_id'])
+
+            for marmita in kit["marmitas"]:
+                statement = text (
+                    """
+                        INSERT INTO itens_kits (qtd_marmita, marmita_id, item_pedido_id)
+                        VALUES (:qtd_marmita, :marmita_id, :item_pedido_id)
+                    """
+                )
+                item_pedido_id = retorna_id_item_pedido(pedido_id)
+                con.execute(statement, qtd_marmita=marmita["qtd_marmita"],
+                            marmita_id=marmita['marmita_id'],
+                            item_pedido_id=item_pedido_id)
+
+
+def buscar_preco_kit(kit_id):
+    with engine.connect() as con:
+        statement = text("""SELECT valor FROM kits WHERE id = :kit_id""")
+        rs = con.execute(statement, kit_id=kit_id)
+        preco = rs.fetchone()
+    return preco[0]
+
+def retorna_id_item_pedido(pedido_id):
+    with engine.connect() as con:
+        statement = text("""SELECT MAX(id) as maxId 
+                            FROM itens_pedidos
+                            WHERE pedido_id = :pedido_id""")
+        rs = con.execute(statement, pedido_id=pedido_id)
+        item_pedido_id = rs.fetchone()
+    return item_pedido_id[0]

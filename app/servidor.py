@@ -17,6 +17,10 @@ def home():
 def listar_sabores():
     return jsonify(lista_sabores_ativos()), 200
 
+@app.route("/kits")
+def listar_kits():
+    return jsonify(lista_kits_ativos()), 200
+
 @app.route("/formapagamento")
 def listar_pagamentos():
     return jsonify(lista_pagamentos_ativo())
@@ -64,6 +68,20 @@ def veirfica_email(email):
     if email_exists:
         return {"message": "Ja existe um cliente com esse E-mail"}, 200
     return {"message": "Nao existe um cliente com esse E-mail"}, 400
+
+@app.route("/pedidos", methods=['POST'])
+def faz_pedido():
+    pedido = request.json
+    cliente_id = pedido['cliente_id']
+    formas_pagamento = pedido['formas_pagamento']
+    itens_pedido = pedido['itens_pedido']
+
+    retorno = inserir_pedido(cliente_id, formas_pagamento, itens_pedido)
+    if retorno is not None:
+        return {"message": "pedido efetuado com sucesso!", "pedido_id": retorno}, 200
+    # else:
+    #     return {"message": "erro ao inserir pedido"}, 500
+
 
 # lembrar de comentar essa parte quando for subir para o heroku
 if __name__ == "__main__":
